@@ -10,6 +10,19 @@ isi form (game + link)                                             bongkar bundl
 unduh hasil (link)         ←   Releases / Artifacts         ←     zip hasil + log
 ```
 
+## 📱 Cara pakai dari HP (paling gampang — pakai app)
+
+Buka app-nya di Chrome HP: **https://kyokoapp.github.io/animestudio/**
+→ menu ⋮ → **Add to Home screen / Install app** (jadi seperti aplikasi biasa).
+
+Di dalam app: isi token GitHub sekali → kirim bundle → pilih game → jalankan → unduh hasilnya.
+Bisa juga tetap manual lewat tombol **Actions → AnimeStudio Extract → Run workflow** seperti biasa.
+
+(Kode sumber app-nya: repo publik [KyokoApp/animestudio](https://github.com/KyokoApp/animestudio) — app shell saja,
+tanpa token dan tanpa hasil. Semua hasil ekstraksi tetap tersimpan **hanya di repo private ini**.)
+
+---
+
 Karena repo ini **private**, hasil ekstraksi (yang isinya asset berhak cipta) **tidak bisa diunduh
 siapa pun kecuali kamu**.
 
