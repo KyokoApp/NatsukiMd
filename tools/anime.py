@@ -149,7 +149,7 @@ def input_dari_args(args):
 
 def kick_lewat_tombol(repo, branch, inputs):
     api(
-        f"/repos/{repo}/actions/workflows/animestudio.yml/dispatches",
+        f"/repos/{repo}/actions/workflows/extract.yml/dispatches",
         "POST",
         {"ref": branch, "inputs": {k: v for k, v in inputs.items() if k != "dry_run"}},
     )
