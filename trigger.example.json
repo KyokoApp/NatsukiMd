@@ -1,0 +1,18 @@
+{
+  "_cara_pakai": [
+    "1) Salin isi file ini ke trigger.json",
+    "2) Ubah game + bundle_url, set dry_run=false",
+    "3) Commit -> workflow AnimeStudio Extract langsung jalan",
+    "Bisa juga dari HP: buka trigger.json di GitHub, tekan ikon pensil, ubah, commit."
+  ],
+  "game": "GI",
+  "bundle_url": "https://github.com/KyokoApp/anime-extract/releases/download/bundle-v1/bundle.zip",
+  "types": "Texture2D,Sprite,TextAsset",
+  "export_type": "Convert",
+  "group_assets": "ByType",
+  "map_op": "None",
+  "unity_version": "",
+  "cli_build": "net10",
+  "publish_release": "yes",
+  "dry_run": false
+}

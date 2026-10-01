@@ -1,0 +1,9 @@
+AnimeStudio Web — contoh TextAsset
+==================================
+File ini dihasilkan oleh mode demo supaya kamu bisa mencoba pratinjau,
+pencarian, filter jenis file, dan download zip tanpa menjalankan CLI asli.
+
+Cara pakai sungguhan:
+ 1. taruh AnimeStudio.CLI.exe di bin/AnimeStudio/
+ 2. muat ulang halaman, badge kanan atas jadi hijau
+ 3. pilih game + file bundle, lalu Mulai ekstraksi

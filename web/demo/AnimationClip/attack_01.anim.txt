@@ -1,0 +1,49 @@
+# contoh AnimationClip (demo)
+AnimationClip:
+  m_Name: Attack_01
+  m_SampleRate: 30
+  m_Keyframes:
+    - time: 0.00
+      bone: Bip001-R-Hand
+      rotY: 0.000
+      posZ: 0.020
+    - time: 0.10
+      bone: Bip001-R-Hand
+      rotY: 0.226
+      posZ: 0.018
+    - time: 0.20
+      bone: Bip001-R-Hand
+      rotY: 0.373
+      posZ: 0.013
+    - time: 0.30
+      bone: Bip001-R-Hand
+      rotY: 0.390
+      posZ: 0.006
+    - time: 0.40
+      bone: Bip001-R-Hand
+      rotY: 0.270
+      posZ: -0.003
+    - time: 0.50
+      bone: Bip001-R-Hand
+      rotY: 0.056
+      posZ: -0.011
+    - time: 0.60
+      bone: Bip001-R-Hand
+      rotY: -0.177
+      posZ: -0.017
+    - time: 0.70
+      bone: Bip001-R-Hand
+      rotY: -0.349
+      posZ: -0.020
+    - time: 0.80
+      bone: Bip001-R-Hand
+      rotY: -0.398
+      posZ: -0.019
+    - time: 0.90
+      bone: Bip001-R-Hand
+      rotY: -0.309
+      posZ: -0.015
+    - time: 1.00
+      bone: Bip001-R-Hand
+      rotY: -0.112
+      posZ: -0.008

@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#080a14">
+<title>AnimeStudio Web — extract asset Unity dari browser</title>
+<link rel="icon" href="/icon.svg">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <svg viewBox="0 0 64 64" aria-hidden="true">
+      <defs>
+        <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#8b5cf6"/>
+          <stop offset="1" stop-color="#ec4899"/>
+        </linearGradient>
+      </defs>
+      <rect x="3" y="3" width="58" height="58" rx="16" fill="url(#g1)"/>
+      <path d="M18 45V19h6l8 14 8-14h6v26h-5.5V28.5L32 41.5 23.5 28.5V45z" fill="#0b0d17"/>
+    </svg>
+    <div>
+      <h1>AnimeStudio Web</h1>
+      <span>extract asset game Unity lewat browser</span>
+    </div>
+  </div>
+  <div class="spacer"></div>
+  <button class="pill" id="cliPill" title="Status CLI"><span class="dot"></span><span id="cliPillText">memuat…</span></button>
+</header>
+
+<main>
+
+  <!-- ============================ TAB 1 : EKSTRAK ============================ -->
+  <section id="view-new" class="view active">
+    <div class="card" id="demoBanner" style="display:none">
+      <h3 id="demoBannerTitle">🧪 Mode Demo aktif</h3>
+      <p class="small muted" style="margin:6px 0 10px" id="demoBannerText">
+        Binary <b>AnimeStudio.CLI</b> belum ada di server ini, jadi tombol “Mulai ekstraksi” belum bisa
+        memproses bundle asli. Tapi semua bagian UI-nya bisa dicoba sekarang pakai hasil contoh.
+      </p>
+      <div class="row wrap">
+        <button class="btn primary" id="btnDemo">Lihat contoh hasil</button>
+        <a class="btn ghost" href="#panduan">Cara pasang CLI</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Langkah 1 — pilih game</h2>
+      <button class="selector" id="gameSelector">
+        <span>
+          <span class="val" id="gameLabel">Genshin Impact — Live</span>
+          <span class="sub" id="gameSub">GI · HoYoverse</span>
+        </span>
+        <span class="chev">▾</span>
+      </button>
+      <p class="tiny muted" style="margin:8px 0 0">
+        Pilih game yang <b>sesuai</b> dengan asal file. Kunci dekripsi tiap game berbeda, kalau salah pilih
+        hasilnya gagal atau jadi sampah.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>Langkah 2 — pilih bundle</h2>
+      <div class="drop" id="drop">
+        <div style="font-size:26px">📦</div>
+        <div class="small">Tarik file ke sini, atau</div>
+        <div class="row" style="justify-content:center; margin-top:8px">
+          <button class="btn" id="btnPickFiles">Pilih file</button>
+          <button class="btn" id="btnPickFolder">Pilih folder</button>
+        </div>
+        <div class="tiny muted" style="margin-top:8px">File bundle Unity: <span class="kbd">.ab</span> <span class="kbd">.bundle</span> <span class="kbd">.assets</span> <span class="kbd">.blk</span>, atau folder game apa adanya (termasuk subfolder).</div>
+      </div>
+      <input type="file" id="fileInput" multiple class="hidden">
+      <input type="file" id="folderInput" webkitdirectory directory multiple class="hidden">
+      <div class="filelist" id="fileList"></div>
+      <div class="row between small muted" id="fileSummary" style="display:none; margin-top:8px">
+        <span id="fileSummaryText">—</span>
+        <button class="btn ghost small" id="btnClearFiles" style="min-height:34px;padding:6px 10px">Bersihkan</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Langkah 3 — jenis asset</h2>
+      <div class="chips" id="typeChips"></div>
+      <div class="row wrap mt">
+        <button class="btn" id="btnPickTypes">＋ Pilih jenis lain</button>
+        <button class="btn ghost" id="btnPresetAll">Semua jenis</button>
+      </div>
+      <p class="tiny muted" style="margin:8px 0 0">Kosongkan pilihan = CLI mengekspor semua jenis yang didukung.</p>
+    </div>
+
+    <details class="adv" style="margin-bottom:12px">
+      <summary>⚙️ Pengaturan lanjutan (opsional)</summary>
+      <div class="grid-2">
+        <label class="field">
+          <span class="lab">Format ekspor (--export_type)</span>
+          <select id="optExportType">
+            <option value="Convert">Convert — dibaca normal (png, wav, obj…)</option>
+            <option value="Raw">Raw — file mentah apa adanya</option>
+            <option value="Dump">Dump — .dat + dump.json</option>
+            <option value="JSON">JSON</option>
+          </select>
+        </label>
+        <label class="field">
+          <span class="lab">Struktur folder (--group_assets)</span>
+          <select id="optGroup">
+            <option value="ByType">ByType — per jenis asset</option>
+            <option value="ByContainer">ByContainer — per bundle asal</option>
+            <option value="BySource">BySource — per file sumber</option>
+            <option value="None">None — semua jadi satu folder</option>
+          </select>
+        </label>
+      </div>
+      <div class="grid-2">
+        <label class="field">
+          <span class="lab">Filter nama asset (regex, --names)</span>
+          <input type="text" id="optNames" placeholder="mis. ^UI_|char_.*_tex">
+        </label>
+        <label class="field">
+          <span class="lab">Filter container (regex, --containers)</span>
+          <input type="text" id="optContainers" placeholder="mis. characters/">
+        </label>
+      </div>
+      <div class="grid-2">
+        <label class="field">
+          <span class="lab">Versi Unity (--unity_version)</span>
+          <input type="text" id="optUnity" placeholder="biarkan kosong = deteksi otomatis">
+        </label>
+        <label class="field">
+          <span class="lab">Map (--map_op)</span>
+          <select id="optMapOp">
+            <option value="None">None — langsung ekspor</option>
+            <option value="CABMap">Bikin CAB map (daftar index bundle)</option>
+            <option value="CABMap,Load">Pakai CAB map yang ada</option>
+            <option value="AssetMap">Bikin Asset map</option>
+            <option value="AssetMap,Load">Pakai Asset map yang ada</option>
+            <option value="Both">Both — bikin keduanya</option>
+            <option value="All">All — bikin + pakai keduanya</option>
+          </select>
+        </label>
+      </div>
+      <div class="grid-2">
+        <label class="field">
+          <span class="lab">Nama map (--map_name)</span>
+          <input type="text" id="optMapName" placeholder="assets_map">
+        </label>
+        <label class="field">
+          <span class="lab">Map type (--map_type)</span>
+          <select id="optMapType">
+            <option value="XML">XML</option>
+            <option value="JSON">JSON</option>
+            <option value="MessagePack">MessagePack</option>
+          </select>
+        </label>
+      </div>
+      <div class="grid-2">
+        <label class="field">
+          <span class="lab">Key UnityCN / MiHoYoBinData (--key)</span>
+          <input type="text" id="optKey" placeholder="desimal atau 0x.. — mis. 0x45">
+        </label>
+        <label class="field">
+          <span class="lab">Asset index json (--ai_file)</span>
+          <input type="text" id="optAiFile" placeholder="C:\path\asset_index.json">
+        </label>
+      </div>
+      <label class="field">
+        <span class="lab">DummyDll folder (--dummy_dlls)</span>
+        <input type="text" id="optDummy" placeholder="C:\path\DummyDll">
+      </label>
+      <label class="row small" style="gap:8px">
+        <input type="checkbox" id="optSilent" style="width:auto">
+        <span><code class="kbd">--silent</code> — sembunyikan log CLI (proses lebih ringan, tapi progress tidak terlihat)</span>
+      </label>
+      <p class="tiny muted" style="margin:10px 0 0">Argumen mentah yang dipakai bisa dilihat di tab <b>Proses</b> setelah job jalan — baris pertama log berisi perintah lengkapnya.</p>
+    </details>
+
+    <button class="btn primary big wide" id="btnStart">🚀 Mulai ekstraksi</button>
+    <p class="tiny muted" style="text-align:center;margin-top:8px">
+      Proses berjalan di komputer server ini (bukan di HP kamu), jadi file besar tidak bikin HP panas.
+    </p>
+  </section>
+
+  <!-- ============================ TAB 2 : PROSES ============================ -->
+  <section id="view-jobs" class="view">
+    <div class="card">
+      <div class="row between">
+        <h2 style="margin:0">Antrian &amp; proses</h2>
+        <button class="btn ghost small" id="btnRefreshJobs" style="min-height:34px;padding:6px 10px">↻ Muat ulang</button>
+      </div>
+      <div id="jobList" class="mt"></div>
+    </div>
+
+    <div class="card" id="logCard" style="display:none">
+      <div class="row between">
+        <h2 style="margin:0">Log <span class="muted tiny" id="logJobId"></span></h2>
+        <label class="row tiny muted" style="gap:6px"><input type="checkbox" id="logFollow" checked style="width:auto"> ikuti</label>
+      </div>
+      <pre class="log" id="logBox">—</pre>
+      <div class="row wrap mt">
+        <button class="btn small" id="btnOpenResults">Buka hasil</button>
+        <button class="btn danger small" id="btnCancelJob">Batalkan</button>
+        <button class="btn ghost small" id="btnDeleteJob">Hapus job</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ TAB 3 : HASIL ============================ -->
+  <section id="view-results" class="view">
+    <div class="card">
+      <h2>Hasil ekstraksi</h2>
+      <div id="resultHead" class="small muted">Belum ada hasil yang dibuka.</div>
+      <div class="toolbar mt">
+        <button class="btn primary" id="btnZip">⬇️ Download semua (.zip)</button>
+        <button class="btn ghost" id="btnRefreshResults">↻ Refresh</button>
+      </div>
+      <div class="bar mt hidden" id="zipBarWrap"><i id="zipBar"></i></div>
+      <div class="tiny muted mt" id="zipInfo"></div>
+    </div>
+
+    <div class="card">
+      <div class="row" style="gap:8px">
+        <input type="search" id="resultSearch" placeholder="Cari nama file…">
+        <select id="extFilter" style="max-width:170px"></select>
+      </div>
+      <div class="chips mt" id="extChips"></div>
+      <div class="gallery mt" id="gallery"></div>
+      <div class="tiny muted mt" id="resultFoot"></div>
+    </div>
+  </section>
+
+  <!-- ============================ TAB 4 : PANDUAN ============================ -->
+  <section id="view-guide" class="view guide">
+    <div class="card">
+      <h2>Tentang</h2>
+      <p class="small" style="margin:0 0 8px">
+        <b>AnimeStudio Web</b> adalah tampilan web (mobile friendly) untuk
+        <a href="https://github.com/Escartem/AnimeStudio" target="_blank" rel="noreferrer">AnimeStudio</a> —
+        tool ekstraksi asset game Unity bikinan <b>Escartem</b>, fork dari Studio (Razmoth) dan AssetStudio (Perfare).
+        Web ini cuma pembungkus: semua pekerjaan berat tetap dijalankan oleh <code class="kbd">AnimeStudio.CLI</code>.
+      </p>
+      <p class="tiny muted">Lisensi AnimeStudio: MIT. Web wrapper ini juga kamu bebas pakai/modifikasi.</p>
+      <div class="row wrap mt">
+        <a class="btn ghost small" href="https://github.com/Escartem/AnimeStudio" target="_blank" rel="noreferrer">Repo AnimeStudio</a>
+        <a class="btn ghost small" href="https://github.com/Escartem/AnimeStudio/wiki" target="_blank" rel="noreferrer">Wiki resmi</a>
+        <a class="btn ghost small" href="https://github.com/Escartem/AnimeStudio/blob/master/LICENSE" target="_blank" rel="noreferrer">Lisensi MIT</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Cara pakai (3 langkah)</h2>
+      <ol class="small">
+        <li><b>Pilih game</b> yang cocok dengan file kamu. Ini paling penting — kunci dekripsi beda-beda.</li>
+        <li><b>Pilih file/folder</b> bundle Unity yang mau dibongkar. Bisa satu file, banyak file, atau satu folder game utuh.</li>
+        <li><b>Mulai ekstraksi</b>, lihat progress di tab <b>Proses</b>, lalu ambil hasilnya di tab <b>Hasil</b> (per file atau sekaligus .zip).</li>
+      </ol>
+      <p class="tiny muted note">Tips: mulai dari satu bundle kecil dulu untuk memastikan pilihan game-nya benar, baru lanjut ke folder besar.</p>
+    </div>
+
+    <div class="card">
+      <h2>Cara pasang CLI (sekali saja)</h2>
+      <ol class="small">
+        <li>Unduh build resmi (Windows x64, butuh
+          <a href="https://dotnet.microsoft.com/download/dotnet" target="_blank" rel="noreferrer">.NET Desktop Runtime</a> yang cocok):
+          <div class="row wrap mt" style="margin:8px 0">
+            <a class="btn primary small" href="https://nightly.link/Escartem/AnimeStudio/workflows/build/master/AnimeStudio-net10.zip" target="_blank" rel="noreferrer">⬇️ Build .NET 10 (terbaru)</a>
+            <a class="btn ghost small" href="https://nightly.link/Escartem/AnimeStudio/workflows/build/master/AnimeStudio-net9.zip" target="_blank" rel="noreferrer">⬇️ Build .NET 9 (stabil)</a>
+          </div>
+        </li>
+        <li>Ekstrak isi zip ke folder <code class="path">animestudio-web/bin/AnimeStudio/</code> — jadi ada
+          <code class="path">bin/AnimeStudio/AnimeStudio.CLI.exe</code> (subfolder juga terdeteksi otomatis).</li>
+        <li>Muat ulang halaman ini. Indikator di kanan atas berubah jadi hijau <b>“CLI siap”</b>.</li>
+      </ol>
+      <p class="small" style="margin-bottom:0">Mau pakai build/path lain? Jalankan server dengan
+        <code class="kbd">AS_CLI="D:\tools\AnimeStudio.CLI.exe" node server.js</code></p>
+    </div>
+
+    <div class="card">
+      <h2>Kalau cuma punya HP 📱</h2>
+      <p class="small">AnimeStudio resminya <b>Windows x64</b> (butuh .NET). Jadi HP-nya dipakai sebagai
+        remote-control saja — CLI-nya harus jalan di suatu tempat “Windows”. Pilihan realistis, dari yang paling gampang:</p>
+      <ol class="small">
+        <li><b>Tanpa PC sama sekali → GitHub Actions</b>: lihat kartu “🌟 Tanpa PC sama sekali?” di atas.
+          Ini yang paling direkomendasikan kalau kamu cuma punya HP.</li>
+        <li><b>Titip jalan di PC</b> (teman/keluarga/warnet): jalankan <code class="kbd">run-windows.bat</code>, lalu buka alamat
+          <code class="kbd">http://IP-PC:8787</code> dari HP yang tersambung wifi sama. Semua proses &amp; hasil tetap di PC itu.</li>
+        <li><b>Cloud PC / VPS Windows</b> (mis. Azure, Contabo, Hetzner, layanan RDP lokal): jalankan server di sana,
+          akses lewat browser HP. Cocok kalau mau pakai jangka panjang tanpa PC sendiri.</li>
+        <li><b>Android + Termux (eksperimental)</b>: cuma bisa kalau build-nya jalan di Wine/Box86-ARM — tidak resmi dan sering gagal.
+          Kalau berhasil pun, kecepatannya jauh di bawah PC.</li>
+        <li><b>Minta tolong komunitas</b>: banyak yang sudah punya setup dan mau bantu ekstrak —
+          <a href="https://discord.gg/fzRdtVh" target="_blank" rel="noreferrer">Discord AnimeStudio</a>.</li>
+      </ol>
+      <p class="tiny muted">Catatan jujur: ekstraksi asset game besar (puluhan GB) realistisnya butuh PC/VPS — RAM dan CPU-nya jauh lebih kuat.</p>
+    </div>
+
+    <div class="card">
+      <h2>🌟 Tanpa PC sama sekali? Pakai GitHub</h2>
+      <p class="small">
+        GitHub punya <b>PC Windows gratis</b> (runner <code class="kbd">windows-latest</code>) yang bisa menjalankan
+        AnimeStudio. Jadi modalnya cuma <b>akun GitHub + browser HP</b>. Semua bisa dikerjakan dari HP:
+        upload bundle → tekan Run workflow → unduh hasil.
+      </p>
+      <ol class="small">
+        <li>Buat repo <b>private</b> di <a href="https://github.com/new" target="_blank" rel="noreferrer">github.com/new</a>.</li>
+        <li>Bikin file <code class="path">.github/workflows/extract.yml</code> (isi file ini sudah disiapkan di folder
+          <code class="path">github-extract/</code> project ini) → Commit.</li>
+        <li><b>Releases → Draft a new release</b> → tag <code class="kbd">v1</code> → attach file bundle (maks 2 GB/file) → Publish,
+          lalu <i>copy link</i> filenya.</li>
+        <li>Tab <b>Actions → AnimeStudio Extract → Run workflow</b>: isi kode game (mis. <code class="kbd">GI</code>) + tempel link bundle → Run.</li>
+        <li>Tunggu 1–5 menit → hasil otomatis muncul di <b>Releases</b> (dan/atau Artifacts), siap diunduh dari HP.</li>
+      </ol>
+      <table class="legend">
+        <tr><td>Runner private repo</td><td>2 core / 8 GB / disk 14 GB — Windows dihitung ×2 dari kuota 2.000 menit/bulan (efektif ±1.000 menit).</td></tr>
+        <tr><td>Hasil di atas 450 MB</td><td>Otomatis ditaruh di Releases (bukan Artifacts) supaya tidak kena kuota storage 500 MB. Hasil &gt; 1,8 GB dipecah otomatis jadi .001/.002.</td></tr>
+        <tr><td>Repo publik</td><td>Gratis tanpa batas menit + mesin 4 core, tapi <b>jangan</b> pakai untuk asset berhak cipta.</td></tr>
+      </table>
+      <p class="tiny muted" style="margin-top:8px">Panduan langkah-per-langkah lengkap: <code class="path">github-extract/README.md</code>. Codespaces tidak bisa dipakai — mesinnya Linux, sedangkan AnimeStudio wajib Windows.</p>
+    </div>
+
+    <div class="card">
+      <h2>Kalau ada masalah</h2>
+      <table class="legend">
+        <tr><td>Invalid Game / hasil sampah</td><td>Salah pilih entri game. Coba entri lain (mis. <code class="kbd">GI</code> vs <code class="kbd">GI_CB3</code>), atau pilih versi Unity yang benar.</td></tr>
+        <tr><td>0 file / folder hasil kosong</td><td>Filter jenis asset atau filter nama terlalu ketat, atau bundle-nya memang kosong. Coba <b>Semua jenis</b> dan hapus filter regex.</td></tr>
+        <tr><td>Progress mentok / lama</td><td>Bundle besar (ratusan MB–GB) memang butuh waktu. Jangan tutup server. Cek log di tab Proses.</td></tr>
+        <tr><td>Error MeshRenderer/SkinnedMeshRenderer</td><td>Coba set jenis asset ke <code class="kbd">Mesh</code>/<code class="kbd">Texture2D</code> saja, atau lewati export model dan ambil teksturnya.</td></tr>
+        <tr><td>File &gt; 2 GB gagal upload</td><td>Upload dari HP lewat browser rawan putus. Pecah folder jadi beberapa batch, atau taruh file langsung ke folder <code class="kbd">data/jobs/&lt;id&gt;/input/</code> di komputer server.</td></tr>
+        <tr><td>Zip gagal dibuat</td><td>Pastikan ruang disk cukup (zip butuh ~1× ukuran hasil). Coba download per folder saja.</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>Etika &amp; legal</h2>
+      <p class="small" style="margin:0">Ekstrak asset hanya untuk pemakaian pribadi (mod, fanart, riset, belajar).
+        Jangan menyebarkan file mentah milik game atau memakainya untuk hal komersial tanpa izin pemiliknya.
+        Ikuti aturan tiap publisher dan jangan bagikan kunci dekripsi ke pihak yang tidak berkepentingan.</p>
+    </div>
+  </section>
+</main>
+
+<nav class="tabbar">
+  <button data-tab="new" class="on"><span class="ic">✨</span>Ekstrak</button>
+  <button data-tab="jobs"><span class="ic">⏳</span>Proses<span class="badge hidden" id="jobBadge"></span></button>
+  <button data-tab="results"><span class="ic">🖼️</span>Hasil</button>
+  <button data-tab="guide"><span class="ic">📖</span>Panduan</button>
+</nav>
+
+<div id="modalRoot"></div>
+<div id="toast"></div>
+<script src="/app.js"></script>
+</body>
+</html>

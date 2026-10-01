@@ -1,0 +1,17 @@
+{
+  "_catatan": [
+    "File pemicu (kick): mengubah file ini akan menjalankan workflow AnimeStudio Extract.",
+    "Isi game + bundle_url dulu, lalu commit. Contoh lengkap: trigger.example.json",
+    "dry_run=true -> hanya menguji input (tidak mengekstrak apa pun)."
+  ],
+  "game": "GI",
+  "bundle_url": "",
+  "types": "Texture2D,Sprite,TextAsset",
+  "export_type": "Convert",
+  "group_assets": "ByType",
+  "map_op": "None",
+  "unity_version": "",
+  "cli_build": "net10",
+  "publish_release": "yes",
+  "dry_run": true
+}

@@ -1,0 +1,36 @@
+{
+  "name": "ItemTable (contoh)",
+  "note": "Data contoh dari mode demo AnimeStudio Web, bukan file game asli.",
+  "items": [
+    {
+      "id": 1000,
+      "name": "Mora",
+      "rarity": 1,
+      "stackLimit": 9999
+    },
+    {
+      "id": 1001,
+      "name": "Hero's Wit",
+      "rarity": 2,
+      "stackLimit": 9999
+    },
+    {
+      "id": 1002,
+      "name": "Adventure EXP",
+      "rarity": 3,
+      "stackLimit": 9999
+    },
+    {
+      "id": 1003,
+      "name": "Mystic Enhancement Ore",
+      "rarity": 4,
+      "stackLimit": 9999
+    },
+    {
+      "id": 1004,
+      "name": "Fate",
+      "rarity": 5,
+      "stackLimit": 9999
+    }
+  ]
+}
