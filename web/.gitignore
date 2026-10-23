@@ -1,7 +1,0 @@
-node_modules/
-data/jobs/
-data/output/
-data/uploads/
-bin/AnimeStudio/*
-!bin/AnimeStudio/.gitkeep
-*.log
