@@ -1,4 +1,6 @@
 // omp-agent-yuki — public API
+export * from './a2ui.js'
+export * from './gemini-keys.js'
 export * from './natsuki/omp-agent.js'
 export * from './natsuki/omp-agent-alias.js'
 export * from './natsuki/omp-agent-anim.js'
